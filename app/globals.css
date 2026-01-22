@@ -115,3 +115,47 @@ input[type="range"]::-moz-range-track {
   height: 8px;
   border-radius: 4px;
 }
+
+/* 弹窗入场动画 - 从底部滑入 */
+@keyframes modal-slide-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 背景遮罩淡入动画 */
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 弹窗退出动画 - 向上飞出 */
+@keyframes modal-slide-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+/* 背景遮罩淡出动画 */
+@keyframes backdrop-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

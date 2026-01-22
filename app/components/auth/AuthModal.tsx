@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -10,11 +10,22 @@ interface AuthModalProps {
 
 export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
   const [email, setEmail] = useState('');
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 禁止背景滚动
+  // 管理渲染状态和背景滚动
   useEffect(() => {
     if (isOpen) {
+      setShouldRender(true);
+      setIsClosing(false);
       document.body.style.overflow = 'hidden';
+
+      // 清除任何待执行的关闭定时器
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -22,38 +33,74 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
     // Cleanup function
     return () => {
       document.body.style.overflow = 'unset';
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  // 处理关闭动画
+  const handleClose = () => {
+    if (isClosing) return; // 防止重复触发
+
+    setIsClosing(true);
+
+    // 清除之前的定时器（如果有）
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
+
+    // 等待动画完成后再真正关闭
+    closeTimeoutRef.current = setTimeout(() => {
+      setShouldRender(false);
+      setIsClosing(false);
+      onClose();
+      closeTimeoutRef.current = null;
+    }, 300); // 与动画时长一致
+  };
+
+  if (!shouldRender) return null;
 
   const title = mode === 'signup' ? 'Join Narrative' : 'Welcome Back';
 
   const handleGoogleLogin = () => {
     // TODO: 实现 Google 登录逻辑
     console.log('Google login clicked');
+    handleClose();
   };
 
   const handleEmailContinue = () => {
     // TODO: 实现邮箱登录逻辑
     console.log('Email continue clicked:', email);
+    handleClose();
   };
 
   const handleWalletConnect = (wallet: string) => {
     // TODO: 实现钱包连接逻辑
     console.log('Wallet connect clicked:', wallet);
+    handleClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
+        className={`absolute inset-0 bg-black/70 backdrop-blur-sm ${
+          isClosing
+            ? 'animate-[backdrop-fade-out_0.3s_ease-out]'
+            : 'animate-[backdrop-fade-in_0.3s_ease-out]'
+        }`}
+        onClick={handleClose}
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-md mx-4">
+      <div
+        className={`relative z-10 w-full max-w-md mx-4 ${
+          isClosing
+            ? 'animate-[modal-slide-out_0.3s_ease-in]'
+            : 'animate-[modal-slide-in_0.4s_ease-out]'
+        }`}
+      >
         <div className="bg-bg-card rounded-3xl border border-border-primary shadow-2xl p-8">
           {/* Title */}
           <h2 className="text-3xl font-bold text-text-primary text-center mb-8">
