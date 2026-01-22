@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ThumbsUp, ThumbsDown, TrendingUp, X } from 'lucide-react';
 import Image from 'next/image';
 import CategoryBadge from './CategoryBadge';
@@ -26,6 +27,7 @@ export interface NarrativeCardProps {
 }
 
 export default function NarrativeCard({
+  id,
   category,
   statusBadge,
   imageUrl,
@@ -39,11 +41,16 @@ export default function NarrativeCard({
   onBuyLong,
   onBuyShort,
 }: NarrativeCardProps) {
+  const router = useRouter();
   const [isInputMode, setIsInputMode] = useState(false);
   const [tradeType, setTradeType] = useState<'long' | 'short'>('long');
   const [amount, setAmount] = useState(100);
   const [basePriceLong] = useState(() => 0.72 + Math.random() * 0.05);
   const [basePriceShort] = useState(() => 0.28 + Math.random() * 0.05);
+
+  const handleImageClick = () => {
+    router.push(`/narrative/${id}`);
+  };
 
   const handleBuyLongClick = () => {
     setTradeType('long');
@@ -80,16 +87,19 @@ export default function NarrativeCard({
   return (
     <div className="bg-bg-card rounded-2xl overflow-hidden border border-border-primary shadow-xl hover:shadow-2xl transition-shadow">
       {/* 卡片头部背景图 */}
-      <div className="relative h-48 bg-linear-to-br from-bg-secondary to-bg-primary overflow-hidden">
+      <div
+        className="relative h-48 bg-linear-to-br from-bg-secondary to-bg-primary overflow-hidden cursor-pointer group"
+        onClick={handleImageClick}
+      >
         <Image
           src={imageUrl}
           alt={title}
           fill
-          className="object-cover opacity-60"
+          className="object-cover opacity-60 group-hover:opacity-70 transition-opacity duration-300"
         />
 
         {/* 标签组 */}
-        <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+        <div className="absolute top-4 left-4 right-4 flex justify-between items-start pointer-events-none">
           <CategoryBadge category={category} />
           {statusBadge && (
             <StatusBadge type={statusBadge.type} text={statusBadge.text} />
