@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 const navItems = [
   { label: 'Explore', href: '/' },
   { label: 'Portfolio', href: '/portfolio' },
-  { label: 'Leaderboard', href: '/leaderboard' },
 ];
 
 export default function NavLinks() {
