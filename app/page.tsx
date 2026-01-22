@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import CategoryFilter from './components/home/CategoryFilter';
-import MarketCard, { MarketCardProps } from './components/home/MarketCard';
+import NarrativeCard, { NarrativeCardProps } from './components/home/NarrativeCard';
 
 // 模拟市场数据
-const mockMarkets: MarketCardProps[] = [
+const mockMarkets: NarrativeCardProps[] = [
   {
     id: '1',
     category: 'CRYPTO',
@@ -28,7 +28,7 @@ const mockMarkets: MarketCardProps[] = [
     category: 'POLITICS',
     statusBadge: { type: 'hot', text: 'HOT' },
     imageUrl: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800&q=80',
-    title: '2024 US Presidential Election',
+    title: '2024 US Presidential Election 32742313',
     description: 'Will the Democratic Party win the 2024 presidential election?',
     longPercentage: 48,
     shortPercentage: 52,
@@ -156,7 +156,7 @@ const mockMarkets: MarketCardProps[] = [
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [markets] = useState<MarketCardProps[]>(mockMarkets);
+  const [markets] = useState<NarrativeCardProps[]>(mockMarkets);
 
   // 根据选中的分类过滤市场
   const filteredMarkets = selectedCategory === 'all'
@@ -225,7 +225,7 @@ export default function Home() {
         {/* Market Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMarkets.map((market) => (
-            <MarketCard
+            <NarrativeCard
               key={market.id}
               {...market}
               onBuyLong={() => handleBuyLong(market.id)}

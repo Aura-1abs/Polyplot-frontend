@@ -56,9 +56,9 @@
 
 ---
 
-#### MarketCard
-- **文件**: `app/components/home/MarketCard.tsx`
-- **作用**: 市场预测卡片
+#### NarrativeCard
+- **文件**: `app/components/home/NarrativeCard.tsx`
+- **作用**: 市场预测卡片（支持交互式金额输入）
 - **状态**: ✅ 已实现
 - **职责**:
   - 展示单个市场预测信息
@@ -68,6 +68,7 @@
   - 提供 Buy Long 和 Buy Short 操作按钮
   - 显示分类标签和状态标签（NEW/HOT/LEFT）
   - 显示参与者头像群组
+  - 提供交互式金额输入界面（点击 Buy Long/Short 后显示）
 - **Props**:
   - `id: string` - 卡片唯一ID
   - `category: string` - 分类名称 (CRYPTO, POLITICS, etc.)
@@ -87,18 +88,33 @@
   - Long 按钮: `bg-long` + `hover:bg-long-hover`
   - Short 按钮: `bg-short` + `hover:bg-short-hover`
   - 进度条: `bg-long` 和 `bg-short`
+  - 收益显示: Long 模式 `text-long`，Short 模式 `text-short`
 - **图标使用**:
   - Buy Long 按钮: `ThumbsUp` (点赞)
   - Buy Short 按钮: `ThumbsDown` (点踩)
   - 交易量: `TrendingUp` (趋势向上)
+  - 关闭输入: `X` (关闭)
 - **样式特点**:
   - 卡片圆角: `rounded-2xl`
   - 卡片阴影: `shadow-xl` + 悬停时 `shadow-2xl`
-  - 图片高度: `h-48`
+  - 卡片内容固定高度: `h-70` (280px)
+  - 图片高度: `h-48` (192px)
   - 图片透明度: `opacity-60`
+  - 标题: 单行显示 `truncate`
+  - 描述: 两行显示 `line-clamp-2` + 固定高度 `h-10`
   - 进度条高度: `h-2`
   - 进度条过渡: `transition-all duration-300`
   - 用户头像重叠: `-space-x-2`
+  - 输入模式动画: `transition-all duration-300`
+  - 输入模式卡片上移: `-mt-16` (覆盖部分背景图)
+- **交互式金额输入界面**:
+  - 关闭按钮: 与标题对齐 `absolute top-3.5 right-2`
+  - Position Amount 标签和 Buying Long/Short 状态标签
+  - 金额显示框: 60% 宽度，包含金额显示和快捷按钮 (+1, +10)
+  - 范围滑块: 40% 宽度，范围 1-1000
+  - 收益信息行: Current Price (当前单价) 和 Potential Profit (潜在收益)
+  - 确认按钮: 全宽，根据 Long/Short 模式显示不同颜色
+  - 进度条: 底部显示，使用 `mt-auto` 固定在底部
 
 ---
 
@@ -106,7 +122,7 @@
 - **文件**: `app/components/home/MarketGrid.tsx`
 - **作用**: 市场卡片网格容器
 - **职责**:
-  - 使用响应式网格布局展示多个 MarketCard
+  - 使用响应式网格布局展示多个 NarrativeCard
   - 处理卡片排列和间距
 - **响应式布局**:
   - 移动端: 1列
@@ -183,10 +199,10 @@ HomePage
 ├── CategoryFilter
 ├── SortOptions (待定)
 └── MarketGrid
-    └── MarketCard
+    └── NarrativeCard
         ├── CategoryBadge
         ├── StatusBadge
-        └── ProgressBar (内联在 MarketCard 中)
+        └── ProgressBar (内联在 NarrativeCard 中)
 ```
 
 ---
@@ -212,7 +228,13 @@ HomePage
 | 2026-01-21 | CategoryFilter | ✅ 实现分类筛选导航栏组件，支持6个分类切换和横向滚动布局 |
 | 2026-01-21 | CategoryBadge | ✅ 实现分类标签组件，支持半透明背景和模糊效果 |
 | 2026-01-21 | StatusBadge | ✅ 实现状态标签组件，支持 NEW/HOT/LEFT 三种状态样式 |
-| 2026-01-21 | MarketCard | ✅ 实现市场预测卡片组件，包含完整的卡片布局、进度条、统计信息和操作按钮 |
+| 2026-01-21 | NarrativeCard | ✅ 实现市场预测卡片组件，包含完整的卡片布局、进度条、统计信息和操作按钮 |
+| 2026-01-22 | NarrativeCard | ✅ 添加交互式金额输入界面，支持点击 Buy Long/Short 后输入交易金额 |
+| 2026-01-22 | NarrativeCard | ✅ 实现卡片内容区域上移动画效果，输入模式下部分覆盖背景图 (-mt-16) |
+| 2026-01-22 | NarrativeCard | ✅ 固定卡片内容高度为 h-70 (280px)，确保所有卡片高度一致 |
+| 2026-01-22 | NarrativeCard | ✅ 添加标题和描述文本限制：标题单行 (truncate)，描述两行 (line-clamp-2 + h-10) |
+| 2026-01-22 | NarrativeCard | ✅ 添加收益信息显示行：Current Price (当前单价) 和 Potential Profit (潜在收益) |
+| 2026-01-22 | NarrativeCard | ✅ 调整关闭按钮位置与标题对齐 (absolute top-3.5 right-2) |
 
 ---
 

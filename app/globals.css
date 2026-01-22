@@ -83,3 +83,35 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+/* 自定义滑块样式 */
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: currentColor;
+  cursor: pointer;
+  border: 3px solid #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: currentColor;
+  cursor: pointer;
+  border: 3px solid #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 4px;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+}
