@@ -56,7 +56,7 @@ export default function ActivePositionRow({ position, onSell }: ActivePositionRo
       {/* Action 列 */}
       <button
         onClick={() => onSell?.(position.id)}
-        className={`${isLong ? 'bg-long hover:bg-long-hover' : 'bg-short hover:bg-short-hover'} text-white font-semibold px-6 py-2 rounded-lg transition-colors`}
+        className={`${isLong ? 'bg-long hover:bg-long-hover text-black' : 'bg-short hover:bg-short-hover text-white'} font-semibold px-6 py-2 rounded-lg transition-colors`}
       >
         Sell
       </button>

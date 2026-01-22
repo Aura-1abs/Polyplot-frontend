@@ -63,6 +63,7 @@
 - **悬停**: `#f97316` → `bg-long-hover`
 - **深色**: `#ea580c` → `bg-long-dark`
 - **用途**: Buy Long 按钮、Long 百分比进度条
+- **⚠️ 重要规范**: **所有使用 `bg-long`、`bg-long-hover` 或 `bg-long-dark` 作为背景色的组件，其文字颜色必须使用 `text-black`（黑色），以确保最佳的对比度和可读性**
 
 #### 紫色（做空 - Short）
 - **主色**: `#a855f7` → `bg-short`
@@ -105,8 +106,10 @@
 
 #### Primary Button (Buy Long)
 ```tsx
-className="bg-long hover:bg-long-hover text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+className="bg-long hover:bg-long-hover text-black font-semibold px-6 py-3 rounded-lg transition-colors"
 ```
+
+**注意**: Long 按钮使用 `text-black` 以确保在琥珀色背景上的最佳对比度。
 
 #### Secondary Button (Buy Short)
 ```tsx

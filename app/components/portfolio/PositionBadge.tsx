@@ -10,7 +10,7 @@ export default function PositionBadge({ type, shares }: PositionBadgeProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className={`${isLong ? 'bg-long' : 'bg-short'} px-3 py-1 rounded-md text-white text-sm font-semibold flex items-center gap-1`}>
+      <span className={`${isLong ? 'bg-long text-black' : 'bg-short text-white'} px-3 py-1 rounded-md text-sm font-semibold flex items-center gap-1`}>
         {isLong ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
         {isLong ? 'LONG' : 'SHORT'}
       </span>
