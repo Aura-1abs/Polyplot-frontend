@@ -9,20 +9,11 @@ import UserAvatar from './UserAvatar';
 import ThemeToggle from './ThemeToggle';
 import WalletModal from '../auth/WalletModal';
 import DepositModal from '../deposit/DepositModal';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 export default function Navigation() {
-  // TODO: 后续替换为真实的用户登录状态
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const { isLoggedIn, setIsLoggedIn, openLoginModal, closeLoginModal, isLoginModalOpen } = useAuth();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
-
-  const handleOpenWalletModal = () => {
-    setIsWalletModalOpen(true);
-  };
-
-  const handleCloseWalletModal = () => {
-    setIsWalletModalOpen(false);
-  };
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -68,7 +59,7 @@ export default function Navigation() {
                 {/* Logged Out State */}
                 {/* Log In Button */}
                 <button
-                  onClick={handleOpenWalletModal}
+                  onClick={openLoginModal}
                   className="text-text-primary hover:text-long transition-colors font-semibold px-6 py-2.5"
                 >
                   Log In
@@ -76,7 +67,7 @@ export default function Navigation() {
 
                 {/* Sign Up Button */}
                 <button
-                  onClick={handleOpenWalletModal}
+                  onClick={openLoginModal}
                   className="bg-long hover:bg-long-hover text-black font-bold px-6 py-2.5 rounded-lg transition-colors"
                 >
                   Sign Up
@@ -92,8 +83,8 @@ export default function Navigation() {
 
       {/* Wallet Modal - Outside header for proper centering */}
       <WalletModal
-        isOpen={isWalletModalOpen}
-        onClose={handleCloseWalletModal}
+        isOpen={isLoginModalOpen}
+        onClose={closeLoginModal}
         onLoginSuccess={handleLoginSuccess}
       />
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Sparkles, ChevronDown, ChevronUp, Send, Bot, User } from 'lucide-react';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 interface Message {
   id: string;
@@ -11,6 +12,7 @@ interface Message {
 }
 
 export default function AIInsightButton() {
+  const { isLoggedIn, openLoginModal } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -106,26 +108,37 @@ export default function AIInsightButton() {
     }
   };
 
+  // 处理按钮点击
+  const handleButtonClick = () => {
+    if (!isLoggedIn) {
+      // 未登录时，打开登录弹窗
+      openLoginModal();
+    } else {
+      // 已登录时，切换聊天框显示状态
+      setIsOpen(!isOpen);
+    }
+  };
+
   return (
     <div className="w-full relative">
       <button
         ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleButtonClick}
         className="w-full flex items-center justify-between bg-gradient-to-r from-short/20 to-long/20 rounded-xl px-5 py-3.5 border border-border-primary hover:border-long/50 transition-all group"
       >
         <div className="flex items-center gap-3">
           <Sparkles className="w-5 h-5 text-long group-hover:text-long-hover transition-colors" />
           <span className="text-text-primary font-semibold text-lg">AI Insight</span>
         </div>
-        {isOpen ? (
+        {isLoggedIn && isOpen ? (
           <ChevronUp className="w-5 h-5 text-text-secondary transition-all duration-300" />
         ) : (
           <ChevronDown className="w-5 h-5 text-text-secondary transition-all duration-300" />
         )}
       </button>
 
-      {/* 悬浮内容 */}
-      {isOpen && (
+      {/* 悬浮内容 - 仅在已登录且打开时显示 */}
+      {isLoggedIn && isOpen && (
         <div
           ref={contentRef}
           className="absolute top-full right-0 mt-3 w-full lg:w-[420px] bg-bg-card rounded-xl border border-border-primary shadow-2xl animate-[dropdown-fade-in_0.2s_ease-out] z-40 max-h-[600px] flex flex-col"
