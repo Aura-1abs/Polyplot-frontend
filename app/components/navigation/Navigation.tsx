@@ -8,11 +8,13 @@ import BalanceDisplay from './BalanceDisplay';
 import UserAvatar from './UserAvatar';
 import ThemeToggle from './ThemeToggle';
 import WalletModal from '../auth/WalletModal';
+import DepositModal from '../deposit/DepositModal';
 
 export default function Navigation() {
   // TODO: 后续替换为真实的用户登录状态
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
 
   const handleOpenWalletModal = () => {
     setIsWalletModalOpen(true);
@@ -28,8 +30,16 @@ export default function Navigation() {
   };
 
   const handleDeposit = () => {
-    // TODO: Open deposit modal
-    console.log('Open deposit modal');
+    setIsDepositModalOpen(true);
+  };
+
+  const handleCloseDepositModal = () => {
+    setIsDepositModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    console.log('User logged out');
   };
 
   return (
@@ -51,7 +61,7 @@ export default function Navigation() {
                 {/* Logged In State */}
                 <NavLinks />
                 <BalanceDisplay onDeposit={handleDeposit} />
-                <UserAvatar />
+                <UserAvatar onLogout={handleLogout} />
               </>
             ) : (
               <>
@@ -85,6 +95,13 @@ export default function Navigation() {
         isOpen={isWalletModalOpen}
         onClose={handleCloseWalletModal}
         onLoginSuccess={handleLoginSuccess}
+      />
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={isDepositModalOpen}
+        onClose={handleCloseDepositModal}
+        balance={0}
       />
     </>
   );
