@@ -116,14 +116,14 @@ input[type="range"]::-moz-range-track {
   border-radius: 4px;
 }
 
-/* 弹窗入场动画 - 从底部滑入 */
+/* 弹窗入场动画 - 优化版：缩放+轻微位移+淡入 */
 @keyframes modal-slide-in {
   from {
-    transform: translateY(100%);
+    transform: translateY(20px) scale(0.95);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
@@ -138,14 +138,14 @@ input[type="range"]::-moz-range-track {
   }
 }
 
-/* 弹窗退出动画 - 向上飞出 */
+/* 弹窗退出动画 - 优化版：缩放+轻微下移+淡出 */
 @keyframes modal-slide-out {
   from {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
   to {
-    transform: translateY(-100%);
+    transform: translateY(10px) scale(0.98);
     opacity: 0;
   }
 }
@@ -160,26 +160,26 @@ input[type="range"]::-moz-range-track {
   }
 }
 
-/* 下拉菜单淡入动画 */
+/* 下拉菜单淡入动画 - 优化版：更自然的滑入 */
 @keyframes dropdown-fade-in {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-10px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-/* 下拉菜单淡出动画 */
+/* 下拉菜单淡出动画 - 优化版：更自然的滑出 */
 @keyframes dropdown-fade-out {
   from {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
   to {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-10px) scale(0.98);
   }
 }

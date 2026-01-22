@@ -75,7 +75,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: Aut
       onClose();
 
       closeTimeoutRef.current = null;
-    }, 300); // 与动画时长一致
+    }, 200); // 与动画时长一致
   };
 
   if (!shouldRender) return null;
@@ -110,8 +110,8 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: Aut
       <div
         className={`absolute inset-0 bg-black/70 backdrop-blur-sm ${
           isClosing
-            ? 'animate-[backdrop-fade-out_0.3s_ease-out]'
-            : 'animate-[backdrop-fade-in_0.3s_ease-out]'
+            ? 'animate-[backdrop-fade-out_0.2s_ease-in-out]'
+            : 'animate-[backdrop-fade-in_0.25s_ease-out]'
         }`}
         onClick={() => handleClose(false)}
       />
@@ -120,8 +120,8 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: Aut
       <div
         className={`relative z-10 w-full max-w-md mx-4 ${
           isClosing
-            ? 'animate-[modal-slide-out_0.3s_ease-in]'
-            : 'animate-[modal-slide-in_0.4s_ease-out]'
+            ? 'animate-[modal-slide-out_0.2s_ease-in-out]'
+            : 'animate-[modal-slide-in_0.3s_cubic-bezier(0.34,1.56,0.64,1)]'
         }`}
       >
         <div className="bg-bg-card rounded-3xl border border-border-primary shadow-2xl p-8">

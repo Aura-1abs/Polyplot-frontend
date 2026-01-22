@@ -197,8 +197,8 @@ export default function AIInsightButton() {
           ref={contentRef}
           className={`absolute top-full right-0 mt-3 w-full lg:w-[420px] bg-bg-card rounded-xl border border-border-primary shadow-2xl z-40 max-h-[600px] flex flex-col ${
             isClosing
-              ? 'animate-[dropdown-fade-out_0.2s_ease-in]'
-              : 'animate-[dropdown-fade-in_0.2s_ease-out]'
+              ? 'animate-[dropdown-fade-out_0.2s_ease-in-out]'
+              : 'animate-[dropdown-fade-in_0.25s_cubic-bezier(0.34,1.56,0.64,1)]'
           }`}
         >
           {/* AI 分析内容 */}
