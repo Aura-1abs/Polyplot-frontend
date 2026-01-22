@@ -1,16 +1,16 @@
 'use client';
 
-import { Flame, Bitcoin, Landmark, Sparkles, Gamepad2, Trophy } from 'lucide-react';
+import { Home, Bitcoin, Landmark, Sparkles, Gamepad2, Trophy } from 'lucide-react';
 import { useState } from 'react';
 
 interface Category {
   id: string;
-  icon: typeof Flame;
+  icon: typeof Home;
   label: string;
 }
 
 const categories: Category[] = [
-  { id: 'all', icon: Flame, label: 'All Narratives' },
+  { id: 'all', icon: Home, label: 'All Narratives' },
   { id: 'crypto', icon: Bitcoin, label: 'Crypto' },
   { id: 'politics', icon: Landmark, label: 'Politics' },
   { id: 'ai-tech', icon: Sparkles, label: 'AI & Tech' },
@@ -46,7 +46,7 @@ export default function CategoryFilter({
             onClick={() => handleCategoryClick(category.id)}
             className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm whitespace-nowrap transition-all ${
               isActive
-                ? 'bg-long text-white shadow-lg'
+                ? 'bg-long text-black shadow-lg'
                 : 'bg-bg-secondary text-text-secondary hover:bg-bg-card hover:text-text-primary'
             }`}
           >

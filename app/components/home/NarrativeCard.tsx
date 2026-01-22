@@ -42,6 +42,8 @@ export default function NarrativeCard({
   const [isInputMode, setIsInputMode] = useState(false);
   const [tradeType, setTradeType] = useState<'long' | 'short'>('long');
   const [amount, setAmount] = useState(100);
+  const [basePriceLong] = useState(() => 0.72 + Math.random() * 0.05);
+  const [basePriceShort] = useState(() => 0.28 + Math.random() * 0.05);
 
   const handleBuyLongClick = () => {
     setTradeType('long');
@@ -72,9 +74,7 @@ export default function NarrativeCard({
   };
 
   // 模拟数据
-  const currentPrice = tradeType === 'long'
-    ? (0.72 + Math.random() * 0.05).toFixed(2)
-    : (0.28 + Math.random() * 0.05).toFixed(2);
+  const currentPrice = (tradeType === 'long' ? basePriceLong : basePriceShort).toFixed(2);
   const potentialProfit = (amount * 0.15).toFixed(2);
 
   return (
@@ -171,7 +171,7 @@ export default function NarrativeCard({
             <div className="flex gap-3">
               <button
                 onClick={handleBuyLongClick}
-                className="flex-1 bg-long hover:bg-long-hover text-white font-semibold px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="flex-1 bg-long hover:bg-long-hover text-black font-semibold px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <ThumbsUp size={18} />
                 Buy Long

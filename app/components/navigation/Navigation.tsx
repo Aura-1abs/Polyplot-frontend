@@ -12,14 +12,14 @@ export default function Navigation() {
         {/* Left Section: Logo */}
         <Logo />
 
-        {/* Center Section: Search Bar + Nav Links */}
-        <div className="flex items-center gap-8 flex-1 mx-8">
+        {/* Center Section: Search Bar */}
+        <div className="flex items-center flex-1 mx-8">
           <SearchBar />
-          <NavLinks />
         </div>
 
-        {/* Right Section: Balance, Avatar, Theme Toggle */}
-        <div className="flex items-center gap-4">
+        {/* Right Section: Nav Links, Balance, Avatar, Theme Toggle */}
+        <div className="flex items-center gap-6">
+          <NavLinks />
           <BalanceDisplay />
           <UserAvatar />
           <ThemeToggle />
