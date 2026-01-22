@@ -1,21 +1,29 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, RefObject } from 'react';
 import { Briefcase, User, FileText, LogOut } from 'lucide-react';
 
 interface AvatarDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
+  avatarRef: RefObject<HTMLButtonElement>;
 }
 
-export default function AvatarDropdown({ isOpen, onClose, onLogout }: AvatarDropdownProps) {
+export default function AvatarDropdown({ isOpen, onClose, onLogout, avatarRef }: AvatarDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // 点击外部关闭下拉菜单
+  // 点击外部关闭下拉菜单（包括点击 Avatar 本身）
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      // 检查点击是否在下拉菜单或 Avatar 按钮内
+      const isClickInsideDropdown = dropdownRef.current?.contains(target);
+      const isClickOnAvatar = avatarRef.current?.contains(target);
+
+      // 如果点击既不在下拉菜单内，也不在 Avatar 按钮内，则关闭
+      if (!isClickInsideDropdown && !isClickOnAvatar) {
         onClose();
       }
     };
@@ -27,7 +35,7 @@ export default function AvatarDropdown({ isOpen, onClose, onLogout }: AvatarDrop
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, avatarRef]);
 
   if (!isOpen) return null;
 

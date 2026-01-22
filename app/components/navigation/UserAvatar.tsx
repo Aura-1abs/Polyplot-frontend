@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { User } from 'lucide-react';
 import AvatarDropdown from './AvatarDropdown';
@@ -17,6 +17,7 @@ export default function UserAvatar({
   onLogout,
 }: UserAvatarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const avatarRef = useRef<HTMLButtonElement>(null);
 
   const handleAvatarClick = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -35,6 +36,7 @@ export default function UserAvatar({
   return (
     <div className="relative">
       <button
+        ref={avatarRef}
         onClick={handleAvatarClick}
         className="relative hover:opacity-80 transition-opacity cursor-pointer"
         aria-label="User menu"
@@ -65,6 +67,7 @@ export default function UserAvatar({
         isOpen={isDropdownOpen}
         onClose={handleCloseDropdown}
         onLogout={handleLogout}
+        avatarRef={avatarRef}
       />
     </div>
   );
