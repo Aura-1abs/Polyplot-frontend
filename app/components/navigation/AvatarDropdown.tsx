@@ -69,12 +69,12 @@ export default function AvatarDropdown({ isOpen, onClose, onLogout }: AvatarDrop
         <span className="font-semibold">Positions</span>
       </button>
 
-      {/* Profile - Highlighted */}
+      {/* Profile */}
       <button
         onClick={handleProfileClick}
-        className="w-full flex items-center gap-3 px-4 py-3 bg-long text-black hover:bg-long-hover transition-colors"
+        className="w-full flex items-center gap-3 px-4 py-3 text-text-primary hover:bg-long hover:text-black transition-colors group"
       >
-        <User size={20} className="text-black" />
+        <User size={20} className="text-text-secondary group-hover:text-black transition-colors" />
         <span className="font-semibold">Profile</span>
       </button>
 
