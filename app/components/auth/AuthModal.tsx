@@ -5,20 +5,31 @@ import { useState, useEffect, useRef } from 'react';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess: () => void;
   mode: 'signup' | 'login';
 }
 
-export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: AuthModalProps) {
   const [email, setEmail] = useState('');
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // 验证邮箱格式
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const isEmailValid = isValidEmail(email);
+
   // 管理渲染状态和背景滚动
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShouldRender(true);
       setIsClosing(false);
+      setEmail(''); // 重置邮箱输入
       document.body.style.overflow = 'hidden';
 
       // 清除任何待执行的关闭定时器
@@ -39,8 +50,8 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
     };
   }, [isOpen]);
 
-  // 处理关闭动画
-  const handleClose = () => {
+  // 处理关闭动画（带登录回调）
+  const handleClose = (shouldLogin: boolean = false) => {
     if (isClosing) return; // 防止重复触发
 
     setIsClosing(true);
@@ -54,7 +65,15 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
     closeTimeoutRef.current = setTimeout(() => {
       setShouldRender(false);
       setIsClosing(false);
+
+      // 如果是登录操作，先调用登录成功回调
+      if (shouldLogin) {
+        onLoginSuccess();
+      }
+
+      // 无论如何都要调用 onClose 来更新父组件的状态
       onClose();
+
       closeTimeoutRef.current = null;
     }, 300); // 与动画时长一致
   };
@@ -66,19 +85,23 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
   const handleGoogleLogin = () => {
     // TODO: 实现 Google 登录逻辑
     console.log('Google login clicked');
-    handleClose();
+    // 先播放退出动画，动画完成后自动登录
+    handleClose(true);
   };
 
   const handleEmailContinue = () => {
+    if (!isEmailValid) return; // 邮箱无效时不执行
     // TODO: 实现邮箱登录逻辑
     console.log('Email continue clicked:', email);
-    handleClose();
+    // 先播放退出动画，动画完成后自动登录
+    handleClose(true);
   };
 
   const handleWalletConnect = (wallet: string) => {
     // TODO: 实现钱包连接逻辑
     console.log('Wallet connect clicked:', wallet);
-    handleClose();
+    // 先播放退出动画，动画完成后自动登录
+    handleClose(true);
   };
 
   return (
@@ -90,7 +113,7 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
             ? 'animate-[backdrop-fade-out_0.3s_ease-out]'
             : 'animate-[backdrop-fade-in_0.3s_ease-out]'
         }`}
-        onClick={handleClose}
+        onClick={() => handleClose(false)}
       />
 
       {/* Modal */}
@@ -140,7 +163,12 @@ export default function AuthModal({ isOpen, onClose, mode }: AuthModalProps) {
             />
             <button
               onClick={handleEmailContinue}
-              className="bg-long hover:bg-long-hover text-black font-bold px-8 py-3.5 rounded-xl transition-colors whitespace-nowrap"
+              disabled={!isEmailValid}
+              className={`font-bold px-8 py-3.5 rounded-xl transition-colors whitespace-nowrap ${
+                isEmailValid
+                  ? 'bg-long hover:bg-long-hover text-black cursor-pointer'
+                  : 'bg-bg-secondary text-text-tertiary cursor-not-allowed opacity-50'
+              }`}
             >
               Continue
             </button>
