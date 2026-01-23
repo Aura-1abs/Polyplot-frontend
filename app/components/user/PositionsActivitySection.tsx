@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Search, ArrowUpDown } from 'lucide-react'
 
-type Tab = 'positions' | 'activity'
+type Tab = 'positions' | 'activity' | 'created'
 type Status = 'active' | 'closed'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -63,13 +63,16 @@ export default function PositionsActivitySection({}: PositionsActivitySectionPro
 
   return (
     <div>
-      {/* Positions/Activity 标签栏 */}
+      {/* Positions/Activity/Created 标签栏 */}
       <div className="flex gap-8 mb-6 border-b border-border-primary">
         <TabButton active={activeTab === 'positions'} onClick={() => setActiveTab('positions')}>
           Positions
         </TabButton>
         <TabButton active={activeTab === 'activity'} onClick={() => setActiveTab('activity')}>
           Activity
+        </TabButton>
+        <TabButton active={activeTab === 'created'} onClick={() => setActiveTab('created')}>
+          Created
         </TabButton>
       </div>
 
@@ -153,6 +156,49 @@ export default function PositionsActivitySection({}: PositionsActivitySectionPro
         <div className="bg-bg-card rounded-2xl border border-border-primary p-6">
           <div className="py-20 text-center">
             <p className="text-text-secondary text-sm">Activity - Coming Soon</p>
+          </div>
+        </div>
+      )}
+
+      {/* Created 内容区 - 显示用户创建的 Narratives */}
+      {activeTab === 'created' && (
+        <div className="bg-bg-card rounded-2xl border border-border-primary p-6">
+          {/* 控制栏 */}
+          <div className="flex justify-between items-center mb-6 gap-4">
+            {/* 左侧：搜索框 */}
+            <div className="flex-1 max-w-2xl">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                <input
+                  type="text"
+                  placeholder="Search narratives"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-bg-secondary border border-border-primary rounded-lg pl-10 pr-4 py-2.5 text-text-primary text-sm placeholder:text-text-tertiary focus:outline-none focus:border-border-secondary transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* 右侧：排序按钮 */}
+            <button className="flex items-center gap-2 bg-bg-secondary hover:bg-bg-secondary/80 text-text-primary px-4 py-2.5 rounded-lg transition-colors border border-border-primary">
+              <ArrowUpDown className="w-4 h-4" />
+              <span className="text-sm font-semibold">Date</span>
+            </button>
+          </div>
+
+          {/* Narratives 网格展示区域 */}
+          <div>
+            {/* 空状态 */}
+            <div className="py-20 text-center">
+              <p className="text-text-secondary text-sm">No narratives created yet</p>
+            </div>
+
+            {/* 待实现：Narratives 网格 */}
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {narratives.map((narrative) => (
+                <NarrativeCard key={narrative.id} {...narrative} />
+              ))}
+            </div> */}
           </div>
         </div>
       )}

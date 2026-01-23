@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, RefObject, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trophy, User, Copy, CircleDollarSign, Check } from 'lucide-react';
+import { Trophy, User, Copy, CircleDollarSign, Check, Settings } from 'lucide-react';
 
 interface AvatarDropdownProps {
   isOpen: boolean;
@@ -144,6 +144,12 @@ export default function AvatarDropdown({
     }
   };
 
+  const handleSettingsClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止事件冒泡，避免触发父元素的点击事件
+    router.push('/setting');
+    handleClose();
+  };
+
   const handleLeaderboardClick = () => {
     // TODO: Navigate to leaderboard page
     console.log('Navigate to leaderboard');
@@ -194,7 +200,7 @@ export default function AvatarDropdown({
       <div className="border-b border-border-primary">
         <div
           onClick={handleProfileClick}
-          className="w-full p-4 flex items-center gap-3 hover:bg-bg-secondary transition-colors group cursor-pointer"
+          className="w-full p-4 flex items-center gap-3 hover:bg-bg-secondary transition-colors group cursor-pointer relative"
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
@@ -228,6 +234,15 @@ export default function AvatarDropdown({
               </button>
             </div>
           </div>
+
+          {/* Settings Icon */}
+          <button
+            onClick={handleSettingsClick}
+            className="absolute top-4 right-4 text-text-tertiary hover:text-text-primary transition-colors"
+            aria-label="Settings"
+          >
+            <Settings size={18} />
+          </button>
         </div>
       </div>
 

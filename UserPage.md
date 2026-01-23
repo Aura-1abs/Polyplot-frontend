@@ -18,11 +18,12 @@
   - **优化卡片尺寸，缩小内边距、字体和图表高度** (2026-01-23 更新)
 - **TimeFilterButton** 组件 (`app/components/user/TimeFilterButton.tsx`)
 - **PositionsActivitySection** 组件 (`app/components/user/PositionsActivitySection.tsx`)
-  - Positions/Activity 标签切换
-  - Active/Closed 状态切换
-  - 搜索功能
-  - Value 排序按钮
+  - Positions/Activity/Created 标签切换
+  - Active/Closed 状态切换（Positions 标签）
+  - 搜索功能（所有标签）
+  - 排序按钮（Positions: Value, Created: Date）
   - 表格布局和空状态 (2026-01-23 新增)
+  - **Created 标签页：显示用户创建的 Narratives** (2026-01-23 新增)
 - **页面路由** (`app/[userID]/page.tsx` - 服务器组件)
 - **UserPageClient** 组件 (`app/[userID]/UserPageClient.tsx` - 客户端组件)
   - 处理所有交互事件（Deposit, Withdraw, Connect）
@@ -410,23 +411,33 @@ interface PositionsActivitySectionProps {
 - 导出文件: `app/components/user/index.ts`
 
 #### 功能特性
-- **双标签切换**: Positions 和 Activity 标签页切换
-- **状态筛选**: Active/Closed 仓位状态切换
-- **搜索功能**: 实时搜索仓位
-- **排序功能**: 按 Value 排序
-- **响应式表格**: 自适应布局
+- **三标签切换**: Positions、Activity 和 Created 标签页切换
+- **状态筛选**: Active/Closed 仓位状态切换（仅 Positions 标签）
+- **搜索功能**: 实时搜索仓位或 narratives
+  - Positions: "Search positions"
+  - Created: "Search narratives"
+- **排序功能**:
+  - Positions 标签: 按 Value 排序
+  - Created 标签: 按 Date 排序
+- **响应式布局**: 自适应表格和网格布局
 - **空状态展示**: 无数据时的友好提示
+  - Positions: "No positions found"
+  - Activity: "Activity - Coming Soon"
+  - Created: "No narratives created yet"
 
 #### 组件结构
 ```tsx
 <div>
-  {/* Positions/Activity 标签栏 */}
+  {/* Positions/Activity/Created 标签栏 */}
   <div className="flex gap-8 mb-6 border-b border-border-primary">
     <TabButton active={activeTab === 'positions'} onClick={() => setActiveTab('positions')}>
       Positions
     </TabButton>
     <TabButton active={activeTab === 'activity'} onClick={() => setActiveTab('activity')}>
       Activity
+    </TabButton>
+    <TabButton active={activeTab === 'created'} onClick={() => setActiveTab('created')}>
+      Created
     </TabButton>
   </div>
 
@@ -497,6 +508,49 @@ interface PositionsActivitySectionProps {
       </div>
     </div>
   )}
+
+  {/* Created 内容区 - 显示用户创建的 Narratives */}
+  {activeTab === 'created' && (
+    <div className="bg-bg-card rounded-2xl border border-border-primary p-6">
+      {/* 控制栏 */}
+      <div className="flex justify-between items-center mb-6 gap-4">
+        {/* 左侧：搜索框 */}
+        <div className="flex-1 max-w-2xl">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+            <input
+              type="text"
+              placeholder="Search narratives"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-bg-secondary border border-border-primary rounded-lg pl-10 pr-4 py-2.5 text-text-primary text-sm placeholder:text-text-tertiary focus:outline-none focus:border-border-secondary transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* 右侧：排序按钮 */}
+        <button className="flex items-center gap-2 bg-bg-secondary hover:bg-bg-secondary/80 text-text-primary px-4 py-2.5 rounded-lg transition-colors border border-border-primary">
+          <ArrowUpDown className="w-4 h-4" />
+          <span className="text-sm font-semibold">Date</span>
+        </button>
+      </div>
+
+      {/* Narratives 展示区域 */}
+      <div>
+        {/* 空状态 */}
+        <div className="py-20 text-center">
+          <p className="text-text-secondary text-sm">No narratives created yet</p>
+        </div>
+
+        {/* 待实现：Narratives 网格 */}
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {narratives.map((narrative) => (
+            <NarrativeCard key={narrative.id} {...narrative} />
+          ))}
+        </div> */}
+      </div>
+    </div>
+  )}
 </div>
 ```
 
@@ -533,6 +587,7 @@ interface PositionsActivitySectionProps {
 
 #### 样式规范
 - **标签栏**:
+  - 三个标签: Positions, Activity, Created
   - 使用 `gap-8` 间距
   - 底部边框 `border-b border-border-primary`
   - 标签字体 `text-lg font-semibold`
@@ -558,6 +613,8 @@ interface PositionsActivitySectionProps {
   - 背景：`bg-bg-secondary hover:bg-bg-secondary/80`
   - 边框：`border border-border-primary`
   - 内边距：`px-4 py-2.5`
+  - Positions 标签: "Value" 排序
+  - Created 标签: "Date" 排序
 - **表头**:
   - 4列网格布局：`grid grid-cols-4 gap-4`
   - 文字：`text-text-tertiary`, `text-xs`, `uppercase`, `font-semibold`, `tracking-wide`
@@ -567,6 +624,14 @@ interface PositionsActivitySectionProps {
   - 垂直内边距：`py-20`
   - 文字居中：`text-center`
   - 文字样式：`text-text-secondary text-sm`
+  - Positions: "No positions found"
+  - Activity: "Activity - Coming Soon"
+  - Created: "No narratives created yet"
+- **Created 标签页特性**:
+  - 搜索框占位符：`"Search narratives"`
+  - 排序按钮：按 Date 排序
+  - 预留网格布局：`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`
+  - 用于展示 NarrativeCard 组件
 
 ---
 
