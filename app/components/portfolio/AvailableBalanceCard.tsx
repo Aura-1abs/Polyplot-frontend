@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import DepositModal from '../deposit/DepositModal'
+import WithdrawModal from '../withdraw/WithdrawModal'
 
 interface AvailableBalanceCardProps {
   balance: number
@@ -9,6 +10,7 @@ interface AvailableBalanceCardProps {
 
 export default function AvailableBalanceCard({ balance }: AvailableBalanceCardProps) {
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
   const isWithdrawDisabled = balance < 0.5
 
   const handleDeposit = () => {
@@ -17,6 +19,14 @@ export default function AvailableBalanceCard({ balance }: AvailableBalanceCardPr
 
   const handleCloseDepositModal = () => {
     setIsDepositModalOpen(false)
+  }
+
+  const handleWithdraw = () => {
+    setIsWithdrawModalOpen(true)
+  }
+
+  const handleCloseWithdrawModal = () => {
+    setIsWithdrawModalOpen(false)
   }
 
   return (
@@ -56,6 +66,7 @@ export default function AvailableBalanceCard({ balance }: AvailableBalanceCardPr
             Deposit
           </button>
           <button
+            onClick={handleWithdraw}
             className={`font-semibold px-6 py-3 rounded-lg transition-colors ${
               isWithdrawDisabled
                 ? 'bg-bg-secondary text-text-tertiary cursor-not-allowed opacity-50'
@@ -73,6 +84,13 @@ export default function AvailableBalanceCard({ balance }: AvailableBalanceCardPr
     <DepositModal
       isOpen={isDepositModalOpen}
       onClose={handleCloseDepositModal}
+      balance={balance}
+    />
+
+    {/* Withdraw Modal */}
+    <WithdrawModal
+      isOpen={isWithdrawModalOpen}
+      onClose={handleCloseWithdrawModal}
       balance={balance}
     />
     </>
