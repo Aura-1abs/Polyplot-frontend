@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Logo from './Logo';
 import SearchBar from './SearchBar';
 import NavLinks from './NavLinks';
@@ -14,9 +15,12 @@ import { useAuth } from '@/app/contexts/AuthContext';
 export default function Navigation() {
   const { isLoggedIn, setIsLoggedIn, openLoginModal, closeLoginModal, isLoginModalOpen } = useAuth();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const router = useRouter();
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
+    // 登录成功后跳转到首页
+    router.push('/');
     // 注意：不需要在这里关闭弹窗，WalletModal 会在动画完成后自动处理
   };
 
