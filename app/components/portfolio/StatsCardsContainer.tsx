@@ -17,9 +17,9 @@ export default function StatsCardsContainer({
 }: StatsCardsContainerProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <TotalPnLCard amount={totalPnL} />
       <TotalValueCard value={totalValue} percentageChange={valueChangePercentage} />
       <AvailableBalanceCard balance={availableBalance} />
-      <TotalPnLCard amount={totalPnL} />
     </div>
   )
 }
