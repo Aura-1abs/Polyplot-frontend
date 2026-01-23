@@ -6,6 +6,7 @@ import { ThumbsUp, ThumbsDown, TrendingUp, X } from 'lucide-react';
 import Image from 'next/image';
 import CategoryBadge from './CategoryBadge';
 import StatusBadge from './StatusBadge';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 export interface NarrativeCardProps {
   id: string;
@@ -42,6 +43,7 @@ export default function NarrativeCard({
   onBuyShort,
 }: NarrativeCardProps) {
   const router = useRouter();
+  const { isLoggedIn, openLoginModal } = useAuth();
   const [isInputMode, setIsInputMode] = useState(false);
   const [tradeType, setTradeType] = useState<'long' | 'short'>('long');
   const [amount, setAmount] = useState(100);
@@ -68,6 +70,13 @@ export default function NarrativeCard({
   };
 
   const handleConfirm = () => {
+    // 检查用户是否登录
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
+
+    // 用户已登录，执行交易逻辑
     if (tradeType === 'long' && onBuyLong) {
       onBuyLong();
     } else if (tradeType === 'short' && onBuyShort) {
