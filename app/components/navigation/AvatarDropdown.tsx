@@ -1,16 +1,27 @@
 'use client';
 
 import { useEffect, useRef, RefObject, useState, useCallback } from 'react';
-import { Briefcase, User, FileText, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Trophy, User, Copy, CircleDollarSign } from 'lucide-react';
 
 interface AvatarDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
   avatarRef: RefObject<HTMLButtonElement>;
+  username?: string;
+  walletAddress?: string;
 }
 
-export default function AvatarDropdown({ isOpen, onClose, onLogout, avatarRef }: AvatarDropdownProps) {
+export default function AvatarDropdown({
+  isOpen,
+  onClose,
+  onLogout,
+  avatarRef,
+  username = 'craeyjiiii',
+  walletAddress = '0xCD94...65c2'
+}: AvatarDropdownProps) {
+  const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
@@ -91,21 +102,49 @@ export default function AvatarDropdown({ isOpen, onClose, onLogout, avatarRef }:
 
   if (!shouldRender) return null;
 
-  const handlePositionsClick = () => {
-    // TODO: Navigate to positions page
-    console.log('Navigate to positions');
-    handleClose();
+  const handleCopyAddress = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止事件冒泡，避免触发父元素的点击事件
+    if (walletAddress) {
+      navigator.clipboard.writeText(walletAddress);
+      // TODO: Show toast notification
+      console.log('Address copied');
+    }
   };
 
   const handleProfileClick = () => {
-    // TODO: Navigate to profile page
-    console.log('Navigate to profile');
+    if (username) {
+      router.push(`/${username}`);
+      handleClose();
+    }
+  };
+
+  const handleLeaderboardClick = () => {
+    // TODO: Navigate to leaderboard page
+    console.log('Navigate to leaderboard');
+    handleClose();
+  };
+
+  const handleRewardsClick = () => {
+    // TODO: Navigate to rewards page
+    console.log('Navigate to rewards');
     handleClose();
   };
 
   const handleDocsClick = () => {
     // TODO: Open official docs
-    console.log('Open official docs');
+    window.open('https://docs.example.com', '_blank');
+    handleClose();
+  };
+
+  const handleSupportClick = () => {
+    // TODO: Open support page
+    console.log('Navigate to support');
+    handleClose();
+  };
+
+  const handleTermsClick = () => {
+    // TODO: Open terms of use page
+    console.log('Navigate to terms');
     handleClose();
   };
 
@@ -118,47 +157,102 @@ export default function AvatarDropdown({ isOpen, onClose, onLogout, avatarRef }:
   return (
     <div
       ref={dropdownRef}
-      className={`absolute top-full right-0 mt-2 w-52 bg-bg-card rounded-xl border border-border-primary shadow-2xl overflow-hidden z-50 ${
+      className={`absolute top-full right-0 mt-2 w-64 bg-bg-card rounded-xl border border-border-primary shadow-2xl overflow-hidden z-50 ${
         isClosing
           ? 'animate-[dropdown-fade-out_0.2s_ease-in]'
           : 'animate-[dropdown-fade-in_0.2s_ease-out]'
       }`}
     >
-      {/* Positions */}
-      <button
-        onClick={handlePositionsClick}
-        className="w-full flex items-center gap-3 px-4 py-3 text-text-primary hover:bg-long hover:text-black transition-colors group"
-      >
-        <Briefcase size={20} className="text-text-secondary group-hover:text-black transition-colors" />
-        <span className="font-semibold">Positions</span>
-      </button>
+      {/* User Info Section */}
+      <div className="border-b border-border-primary">
+        <button
+          onClick={handleProfileClick}
+          className="w-full p-4 flex items-center gap-3 hover:bg-bg-secondary transition-colors group cursor-pointer"
+        >
+          {/* Avatar */}
+          <div className="w-14 h-14 rounded-full bg-long flex items-center justify-center flex-shrink-0">
+            <User size={28} className="text-white" strokeWidth={2} />
+          </div>
 
-      {/* Profile */}
-      <button
-        onClick={handleProfileClick}
-        className="w-full flex items-center gap-3 px-4 py-3 text-text-primary hover:bg-long hover:text-black transition-colors group"
-      >
-        <User size={20} className="text-text-secondary group-hover:text-black transition-colors" />
-        <span className="font-semibold">Profile</span>
-      </button>
+          {/* User Details */}
+          <div className="flex-1 min-w-0 text-left">
+            <h3 className="text-text-primary text-base font-bold mb-0.5 group-hover:text-long transition-colors">
+              {username}
+            </h3>
+            <div className="flex items-center gap-1.5">
+              <span className="text-text-secondary text-xs font-medium truncate">
+                {walletAddress}
+              </span>
+              <button
+                onClick={handleCopyAddress}
+                className="text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0"
+                aria-label="Copy address"
+              >
+                <Copy size={14} />
+              </button>
+            </div>
+          </div>
+        </button>
+      </div>
 
-      {/* Official Docs */}
-      <button
-        onClick={handleDocsClick}
-        className="w-full flex items-center gap-3 px-4 py-3 text-text-primary hover:bg-long hover:text-black transition-colors group"
-      >
-        <FileText size={20} className="text-text-secondary group-hover:text-black transition-colors" />
-        <span className="font-semibold">Official Docs</span>
-      </button>
+      {/* Menu Items */}
+      <div className="py-1">
+        {/* Leaderboard */}
+        <button
+          onClick={handleLeaderboardClick}
+          className="w-full flex items-center gap-2.5 px-4 py-2.5 bg-bg-secondary text-text-primary hover:bg-long hover:text-black transition-colors group"
+        >
+          <Trophy size={18} className="text-text-primary group-hover:text-black transition-colors" />
+          <span className="font-medium text-sm">Leaderboard</span>
+        </button>
 
-      {/* Log Out */}
-      <button
-        onClick={handleLogoutClick}
-        className="w-full flex items-center gap-3 px-4 py-3 text-text-primary hover:bg-long hover:text-black transition-colors group"
-      >
-        <LogOut size={20} className="text-red-500 group-hover:text-black transition-colors" />
-        <span className="font-semibold">Log Out</span>
-      </button>
+        {/* Rewards */}
+        <button
+          onClick={handleRewardsClick}
+          className="w-full flex items-center gap-2.5 px-4 py-2.5 bg-bg-secondary text-text-primary hover:bg-long hover:text-black transition-colors group"
+        >
+          <CircleDollarSign size={18} className="text-text-primary group-hover:text-black transition-colors" />
+          <span className="font-medium text-sm">Rewards</span>
+        </button>
+
+        {/* Divider */}
+        <div className="border-t border-border-primary my-1.5"></div>
+
+        {/* Official Docs */}
+        <button
+          onClick={handleDocsClick}
+          className="w-full flex items-start px-4 py-2.5 bg-bg-secondary text-text-primary hover:bg-long hover:text-black transition-colors"
+        >
+          <span className="font-medium text-sm">Official Docs</span>
+        </button>
+
+        {/* Support */}
+        <button
+          onClick={handleSupportClick}
+          className="w-full flex items-start px-4 py-2.5 bg-bg-secondary text-text-primary hover:bg-long hover:text-black transition-colors"
+        >
+          <span className="font-medium text-sm">Support</span>
+        </button>
+
+        {/* Terms of Use */}
+        <button
+          onClick={handleTermsClick}
+          className="w-full flex items-start px-4 py-2.5 bg-bg-secondary text-text-primary hover:bg-long hover:text-black transition-colors"
+        >
+          <span className="font-medium text-sm">Terms of Use</span>
+        </button>
+
+        {/* Divider */}
+        <div className="border-t border-border-primary my-1.5"></div>
+
+        {/* Log Out */}
+        <button
+          onClick={handleLogoutClick}
+          className="w-full flex items-start px-4 py-2.5 text-left bg-bg-secondary text-red-500 hover:bg-long hover:text-black transition-colors"
+        >
+          <span className="font-medium text-sm">Log Out</span>
+        </button>
+      </div>
     </div>
   );
 }

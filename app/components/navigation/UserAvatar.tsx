@@ -9,12 +9,16 @@ interface UserAvatarProps {
   avatarUrl?: string;
   isOnline?: boolean;
   onLogout?: () => void;
+  username?: string;
+  walletAddress?: string;
 }
 
 export default function UserAvatar({
   avatarUrl,
   isOnline = true,
   onLogout,
+  username,
+  walletAddress,
 }: UserAvatarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const avatarRef = useRef<HTMLButtonElement>(null);
@@ -68,6 +72,8 @@ export default function UserAvatar({
         onClose={handleCloseDropdown}
         onLogout={handleLogout}
         avatarRef={avatarRef}
+        username={username}
+        walletAddress={walletAddress}
       />
     </div>
   );
