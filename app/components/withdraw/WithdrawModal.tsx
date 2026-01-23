@@ -142,16 +142,17 @@ export default function WithdrawModal({
                 Recipient address
               </label>
               <div className="relative bg-bg-secondary border border-border-primary rounded-lg px-3 py-2">
-                <input
-                  type="text"
+                <textarea
                   value={recipientAddress}
                   onChange={(e) => setRecipientAddress(e.target.value)}
-                  className="w-full bg-transparent text-text-primary text-sm font-mono outline-none pr-32"
+                  className="w-full bg-transparent text-text-primary text-sm font-mono outline-none pr-32 resize-none overflow-hidden break-all"
                   placeholder="Enter wallet address"
+                  rows={2}
+                  style={{ minHeight: '2.5rem' }}
                 />
                 <button
                   onClick={handleUseConnected}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-long hover:bg-long-hover text-black font-semibold px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 text-xs"
+                  className="absolute right-1.5 top-2 bg-long hover:bg-long-hover text-black font-semibold px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 text-xs"
                 >
                   <Wallet size={13} />
                   Use connected
@@ -215,7 +216,7 @@ export default function WithdrawModal({
                   Receive chain
                 </label>
                 <div className="bg-bg-secondary border border-border-primary rounded-lg px-2.5 py-2 cursor-pointer hover:bg-bg-primary transition-colors">
-                  <div className="flex items-center justify-between mb-0.5">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {/* Polygon Icon */}
                       <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center">
@@ -225,7 +226,6 @@ export default function WithdrawModal({
                     </div>
                     <ChevronDown size={16} className="text-text-tertiary" />
                   </div>
-                  <div className="text-text-tertiary text-[10px] font-mono pl-8">#85B5CF6</div>
                 </div>
               </div>
             </div>
