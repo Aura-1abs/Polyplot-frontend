@@ -183,3 +183,27 @@ input[type="range"]::-moz-range-track {
     transform: translateY(-10px) scale(0.98);
   }
 }
+
+/* Toast 提示淡入动画 */
+@keyframes toast-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+}
+
+/* Toast 滑入动画 - 用于 fixed 定位 */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1);
+  }
+}

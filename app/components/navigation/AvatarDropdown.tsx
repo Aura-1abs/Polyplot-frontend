@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, RefObject, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trophy, User, Copy, CircleDollarSign } from 'lucide-react';
+import { Trophy, User, Copy, CircleDollarSign, Check } from 'lucide-react';
 
 interface AvatarDropdownProps {
   isOpen: boolean;
@@ -23,9 +23,13 @@ export default function AvatarDropdown({
 }: AvatarDropdownProps) {
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const copyButtonRef = useRef<HTMLButtonElement>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [showCopyToast, setShowCopyToast] = useState(false);
+  const [toastPosition, setToastPosition] = useState({ top: 0, left: 0 });
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 管理渲染状态
   useEffect(() => {
@@ -44,6 +48,9 @@ export default function AvatarDropdown({
     return () => {
       if (closeTimeoutRef.current) {
         clearTimeout(closeTimeoutRef.current);
+      }
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
       }
     };
   }, [isOpen]);
@@ -104,10 +111,29 @@ export default function AvatarDropdown({
 
   const handleCopyAddress = (e: React.MouseEvent) => {
     e.stopPropagation(); // 阻止事件冒泡，避免触发父元素的点击事件
-    if (walletAddress) {
+    if (walletAddress && copyButtonRef.current) {
       navigator.clipboard.writeText(walletAddress);
-      // TODO: Show toast notification
-      console.log('Address copied');
+
+      // 计算 toast 位置
+      const rect = copyButtonRef.current.getBoundingClientRect();
+      setToastPosition({
+        top: rect.top + rect.height / 2,
+        left: rect.right + 8, // 按钮右侧 8px
+      });
+
+      // 显示复制成功提示
+      setShowCopyToast(true);
+
+      // 清除之前的定时器
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+
+      // 3秒后自动隐藏
+      toastTimeoutRef.current = setTimeout(() => {
+        setShowCopyToast(false);
+        toastTimeoutRef.current = null;
+      }, 3000);
     }
   };
 
@@ -155,19 +181,28 @@ export default function AvatarDropdown({
   };
 
   return (
-    <div
-      ref={dropdownRef}
-      className={`absolute top-full right-0 mt-2 w-64 bg-bg-card rounded-xl border border-border-primary shadow-2xl overflow-hidden z-50 ${
-        isClosing
-          ? 'animate-[dropdown-fade-out_0.2s_ease-in]'
-          : 'animate-[dropdown-fade-in_0.2s_ease-out]'
-      }`}
-    >
+    <>
+      <div
+        ref={dropdownRef}
+        className={`absolute top-full right-0 mt-2 w-64 bg-bg-card rounded-xl border border-border-primary shadow-2xl overflow-hidden z-50 ${
+          isClosing
+            ? 'animate-[dropdown-fade-out_0.2s_ease-in]'
+            : 'animate-[dropdown-fade-in_0.2s_ease-out]'
+        }`}
+      >
       {/* User Info Section */}
       <div className="border-b border-border-primary">
-        <button
+        <div
           onClick={handleProfileClick}
           className="w-full p-4 flex items-center gap-3 hover:bg-bg-secondary transition-colors group cursor-pointer"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleProfileClick();
+            }
+          }}
         >
           {/* Avatar */}
           <div className="w-14 h-14 rounded-full bg-long flex items-center justify-center flex-shrink-0">
@@ -184,6 +219,7 @@ export default function AvatarDropdown({
                 {walletAddress}
               </span>
               <button
+                ref={copyButtonRef}
                 onClick={handleCopyAddress}
                 className="text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0"
                 aria-label="Copy address"
@@ -192,7 +228,7 @@ export default function AvatarDropdown({
               </button>
             </div>
           </div>
-        </button>
+        </div>
       </div>
 
       {/* Menu Items */}
@@ -253,6 +289,27 @@ export default function AvatarDropdown({
           <span className="font-medium text-sm">Log Out</span>
         </button>
       </div>
-    </div>
+      </div>
+
+      {/* Copy Success Toast - Outside dropdown to avoid overflow clipping */}
+      {showCopyToast && (
+        <div
+          className="fixed z-[100] whitespace-nowrap"
+          style={{
+            top: `${toastPosition.top}px`,
+            left: `${toastPosition.left}px`,
+            transform: 'translateY(-50%)',
+            animation: 'toast-slide-in 0.2s ease-out',
+          }}
+        >
+          <div className="bg-bg-card border border-border-primary rounded-lg px-3 py-2 shadow-2xl flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-new flex items-center justify-center">
+              <Check size={10} className="text-white" strokeWidth={3} />
+            </div>
+            <span className="text-text-primary font-medium text-xs">Copied!</span>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
