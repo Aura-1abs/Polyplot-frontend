@@ -19,37 +19,31 @@ const TwitterIcon = ({ className }: { className?: string }) => (
 interface UserProfileCardProps {
   username: string
   avatar?: string
+  bio?: string
   joinDate: string
   views: number
   positionsValue: string
+  biggestWin?: string
   isConnected?: boolean
   onConnectToggle?: () => void
-  onDeposit?: () => void
-  onWithdraw?: () => void
 }
 
 export default function UserProfileCard({
   username,
   avatar,
+  bio,
   joinDate,
   views,
   positionsValue,
+  biggestWin = '$0',
   isConnected = false,
-  onConnectToggle,
-  onDeposit,
-  onWithdraw
+  onConnectToggle
 }: UserProfileCardProps) {
   const [connected, setConnected] = useState(isConnected)
 
   const handleConnectClick = () => {
     setConnected(!connected)
     onConnectToggle?.()
-  }
-
-  // 解析 positionsValue 判断是否有余额
-  const hasBalance = () => {
-    const numericValue = parseFloat(positionsValue.replace(/[$,]/g, ''))
-    return !isNaN(numericValue) && numericValue > 0
   }
 
   return (
@@ -93,32 +87,26 @@ export default function UserProfileCard({
         </div>
       </div>
 
-      {/* 底部区域：统计数据和操作按钮 - 固定在底部 */}
-      <div className="flex items-end gap-4 pt-6 border-t border-border-primary mt-auto">
+      {/* Bio 介绍栏 */}
+      {bio && (
+        <div className="mt-4 mb-2">
+          <p className="text-text-secondary text-sm leading-relaxed">
+            {bio}
+          </p>
+        </div>
+      )}
+
+      {/* 底部区域：统计数据 - 固定在底部 */}
+      <div className="flex items-end gap-8 pt-6 border-t border-border-primary mt-auto">
         {/* Positions Value 统计 */}
         <div className="flex-shrink-0">
           <UserStatItem label="Positions Value" value={positionsValue} />
         </div>
 
-        {/* Deposit 按钮 */}
-        <button
-          onClick={onDeposit}
-          className="flex-1 bg-long hover:bg-long-hover text-black font-semibold px-6 py-3 rounded-lg transition-colors"
-        >
-          Deposit
-        </button>
-
-        {/* Withdraw 按钮 */}
-        <button
-          onClick={onWithdraw}
-          className={`flex-1 ${
-            hasBalance()
-              ? 'bg-short hover:bg-short-hover text-white'
-              : 'bg-bg-secondary hover:bg-bg-secondary/80 border border-border-primary text-text-primary'
-          } font-semibold px-6 py-3 rounded-lg transition-colors`}
-        >
-          Withdraw
-        </button>
+        {/* Biggest Win 统计 */}
+        <div className="flex-shrink-0">
+          <UserStatItem label="Biggest Win" value={biggestWin} />
+        </div>
       </div>
     </div>
   )

@@ -6,9 +6,11 @@ import { UserProfileCard, ProfitLossChart, PositionsActivitySection } from '@/ap
 interface UserPageClientProps {
   userData: {
     username: string
+    bio?: string
     joinDate: string
     views: number
     positionsValue: string
+    biggestWin: string
     profitLoss: string
     isConnected: boolean
   }
@@ -30,16 +32,6 @@ export default function UserPageClient({ userData }: UserPageClientProps) {
     return () => clearTimeout(timer)
   }, [userData.username]) // 当用户名改变时也重置滚动
 
-  const handleDeposit = () => {
-    console.log('Deposit clicked')
-    // TODO: 打开存款模态框
-  }
-
-  const handleWithdraw = () => {
-    console.log('Withdraw clicked')
-    // TODO: 打开提款模态框
-  }
-
   return (
     <div className="min-h-screen bg-bg-primary">
       <main className="max-w-7xl mx-auto px-6 py-8">
@@ -48,12 +40,12 @@ export default function UserPageClient({ userData }: UserPageClientProps) {
           {/* 左侧：用户资料卡片 */}
           <UserProfileCard
             username={userData.username}
+            bio={userData.bio}
             joinDate={userData.joinDate}
             views={userData.views}
             positionsValue={userData.positionsValue}
+            biggestWin={userData.biggestWin}
             isConnected={userData.isConnected}
-            onDeposit={handleDeposit}
-            onWithdraw={handleWithdraw}
           />
 
           {/* 右侧：盈亏图表卡片 */}
