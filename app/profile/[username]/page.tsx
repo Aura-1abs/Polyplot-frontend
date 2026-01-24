@@ -13,11 +13,12 @@ export default async function UserPage({ params }: UserPageProps) {
   // For now, using mock data
   const userData = {
     username,
+    bio: 'Crypto enthusiast | Long-term investor | Building the future of prediction markets',
     joinDate: 'Jan 2026',
     views: 0,
     positionsValue: '$0.00',
-    profitLoss: '$0.00',
-    isConnected: false
+    biggestWin: '$0.00',
+    profitLoss: '$0.00'
   }
 
   return <UserPageClient userData={userData} />

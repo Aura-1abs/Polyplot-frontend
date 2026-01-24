@@ -1,11 +1,36 @@
+'use client'
+
+import { useState } from 'react'
+import DepositModal from '../deposit/DepositModal'
+import WithdrawModal from '../withdraw/WithdrawModal'
+
 interface AvailableBalanceCardProps {
   balance: number
 }
 
 export default function AvailableBalanceCard({ balance }: AvailableBalanceCardProps) {
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
   const isWithdrawDisabled = balance < 0.5
 
+  const handleDeposit = () => {
+    setIsDepositModalOpen(true)
+  }
+
+  const handleCloseDepositModal = () => {
+    setIsDepositModalOpen(false)
+  }
+
+  const handleWithdraw = () => {
+    setIsWithdrawModalOpen(true)
+  }
+
+  const handleCloseWithdrawModal = () => {
+    setIsWithdrawModalOpen(false)
+  }
+
   return (
+    <>
     <div className="bg-bg-card rounded-2xl p-6 border border-border-primary relative overflow-hidden">
       {/* 装饰性背景图标 */}
       <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-5">
@@ -35,11 +60,13 @@ export default function AvailableBalanceCard({ balance }: AvailableBalanceCardPr
         {/* 右侧：Deposit & Withdraw Buttons */}
         <div className="flex flex-col gap-3">
           <button
+            onClick={handleDeposit}
             className="bg-long hover:bg-long-hover text-black font-semibold px-6 py-3 rounded-lg transition-colors"
           >
             Deposit
           </button>
           <button
+            onClick={handleWithdraw}
             className={`font-semibold px-6 py-3 rounded-lg transition-colors ${
               isWithdrawDisabled
                 ? 'bg-bg-secondary text-text-tertiary cursor-not-allowed opacity-50'
@@ -52,5 +79,20 @@ export default function AvailableBalanceCard({ balance }: AvailableBalanceCardPr
         </div>
       </div>
     </div>
+
+    {/* Deposit Modal */}
+    <DepositModal
+      isOpen={isDepositModalOpen}
+      onClose={handleCloseDepositModal}
+      balance={balance}
+    />
+
+    {/* Withdraw Modal */}
+    <WithdrawModal
+      isOpen={isWithdrawModalOpen}
+      onClose={handleCloseWithdrawModal}
+      balance={balance}
+    />
+    </>
   )
 }

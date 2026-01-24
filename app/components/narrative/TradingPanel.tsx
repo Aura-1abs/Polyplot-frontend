@@ -5,6 +5,8 @@ import PriceDisplay from './PriceDisplay'
 import AmountInput from './AmountInput'
 import PercentageButtons from './PercentageButtons'
 import TradeInfo from './TradeInfo'
+import AuthorizationModal from '@/app/components/auth/AuthorizationModal'
+import { useAuth } from '@/app/contexts/AuthContext'
 
 interface TradingPanelProps {
   currentPrice: number
@@ -19,9 +21,11 @@ export default function TradingPanel({
   userBalance,
   onTrade,
 }: TradingPanelProps) {
+  const { isLoggedIn, openLoginModal } = useAuth()
   const [tradeMode, setTradeMode] = useState<'buy' | 'sell'>('buy')
   const [tradeType, setTradeType] = useState<'long' | 'short'>('long')
   const [amount, setAmount] = useState<number>(0)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
 
   // 计算交易信息
   const estimatedShares = amount > 0 ? amount / currentPrice : 0
@@ -34,6 +38,20 @@ export default function TradingPanel({
   }
 
   const handleConfirm = () => {
+    if (amount <= 0) return
+
+    // 检查用户是否登录
+    if (!isLoggedIn) {
+      openLoginModal()
+      return
+    }
+
+    // 用户已登录，打开授权弹窗
+    setIsAuthModalOpen(true)
+  }
+
+  const handleAuthComplete = () => {
+    // 授权完成后执行交易逻辑
     if (amount > 0 && onTrade) {
       onTrade(tradeType, tradeMode, amount)
     }
@@ -144,6 +162,13 @@ export default function TradingPanel({
           Terms of Service
         </a>
       </p>
+
+      {/* Authorization Modal */}
+      <AuthorizationModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onComplete={handleAuthComplete}
+      />
     </div>
   )
 }

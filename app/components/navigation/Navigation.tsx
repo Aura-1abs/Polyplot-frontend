@@ -15,6 +15,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 export default function Navigation() {
   const { isLoggedIn, setIsLoggedIn, openLoginModal, closeLoginModal, isLoginModalOpen } = useAuth();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [userBalance] = useState(1240.50); // TODO: 从用户数据或 context 中获取真实余额
   const router = useRouter();
 
   const handleLoginSuccess = () => {
@@ -35,6 +36,8 @@ export default function Navigation() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     console.log('User logged out');
+    // 登出后自动跳转到首页
+    router.push('/');
   };
 
   return (
@@ -55,7 +58,7 @@ export default function Navigation() {
               <>
                 {/* Logged In State */}
                 <NavLinks />
-                <BalanceDisplay onDeposit={handleDeposit} />
+                <BalanceDisplay balance={userBalance} onDeposit={handleDeposit} />
                 <UserAvatar onLogout={handleLogout} />
               </>
             ) : (
@@ -96,7 +99,7 @@ export default function Navigation() {
       <DepositModal
         isOpen={isDepositModalOpen}
         onClose={handleCloseDepositModal}
-        balance={0}
+        balance={userBalance}
       />
     </>
   );
