@@ -7,6 +7,7 @@ import Image from 'next/image';
 import CategoryBadge from './CategoryBadge';
 import StatusBadge from './StatusBadge';
 import { useAuth } from '@/app/contexts/AuthContext';
+import AuthorizationModal from '@/app/components/auth/AuthorizationModal';
 
 export interface NarrativeCardProps {
   id: string;
@@ -49,6 +50,7 @@ export default function NarrativeCard({
   const [amount, setAmount] = useState(100);
   const [basePriceLong] = useState(() => 0.72 + Math.random() * 0.05);
   const [basePriceShort] = useState(() => 0.28 + Math.random() * 0.05);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const handleImageClick = () => {
     router.push(`/narrative/${id}`);
@@ -76,7 +78,12 @@ export default function NarrativeCard({
       return;
     }
 
-    // 用户已登录，执行交易逻辑
+    // 用户已登录，打开授权弹窗
+    setIsAuthModalOpen(true);
+  };
+
+  const handleAuthComplete = () => {
+    // 授权完成后执行交易逻辑
     if (tradeType === 'long' && onBuyLong) {
       onBuyLong();
     } else if (tradeType === 'short' && onBuyShort) {
@@ -306,6 +313,13 @@ export default function NarrativeCard({
           </>
         )}
       </div>
+
+      {/* Authorization Modal */}
+      <AuthorizationModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onComplete={handleAuthComplete}
+      />
     </div>
   );
 }
