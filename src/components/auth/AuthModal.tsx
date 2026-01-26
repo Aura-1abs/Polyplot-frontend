@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import LoadingSpinner from './LoadingSpinner';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -14,6 +15,8 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: Aut
   const [email, setEmail] = useState('');
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 验证邮箱格式
@@ -31,6 +34,7 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: Aut
       setShouldRender(true);
       setIsClosing(false);
       setEmail(''); // 重置邮箱输入
+      setIsLoading(false); // 重置加载状态
       document.body.style.overflow = 'hidden';
 
       // 清除任何待执行的关闭定时器
@@ -84,25 +88,59 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: Aut
   const title = mode === 'signup' ? 'Join Narrative' : 'Welcome Back';
 
   const handleGoogleLogin = () => {
+    setIsLoading(true);
+    setLoadingMessage('Connecting to Google...');
+
     // TODO: 实现 Google 登录逻辑
     console.log('Google login clicked');
-    // 先播放退出动画，动画完成后自动登录
-    handleClose(true);
+
+    // 模拟登录过程
+    setTimeout(() => {
+      setLoadingMessage('Authenticating...');
+      setTimeout(() => {
+        setIsLoading(false);
+        // 先播放退出动画，动画完成后自动登录
+        handleClose(true);
+      }, 1000);
+    }, 1500);
   };
 
   const handleEmailContinue = () => {
     if (!isEmailValid) return; // 邮箱无效时不执行
+
+    setIsLoading(true);
+    setLoadingMessage('Sending verification email...');
+
     // TODO: 实现邮箱登录逻辑
     console.log('Email continue clicked:', email);
-    // 先播放退出动画，动画完成后自动登录
-    handleClose(true);
+
+    // 模拟登录过程
+    setTimeout(() => {
+      setLoadingMessage('Verifying...');
+      setTimeout(() => {
+        setIsLoading(false);
+        // 先播放退出动画，动画完成后自动登录
+        handleClose(true);
+      }, 1000);
+    }, 1500);
   };
 
   const handleWalletConnect = (wallet: string) => {
+    setIsLoading(true);
+    setLoadingMessage(`Connecting to ${wallet}...`);
+
     // TODO: 实现钱包连接逻辑
     console.log('Wallet connect clicked:', wallet);
-    // 先播放退出动画，动画完成后自动登录
-    handleClose(true);
+
+    // 模拟登录过程
+    setTimeout(() => {
+      setLoadingMessage('Authenticating wallet...');
+      setTimeout(() => {
+        setIsLoading(false);
+        // 先播放退出动画，动画完成后自动登录
+        handleClose(true);
+      }, 1000);
+    }, 1500);
   };
 
   return (
@@ -126,6 +164,17 @@ export default function AuthModal({ isOpen, onClose, onLoginSuccess, mode }: Aut
         }`}
       >
         <div className="bg-bg-card rounded-3xl border border-border-primary shadow-2xl p-8">
+          {/* Loading Overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 bg-bg-card/95 backdrop-blur-sm rounded-3xl flex items-center justify-center z-20">
+              <LoadingSpinner
+                size="lg"
+                message={loadingMessage}
+                variant="long"
+              />
+            </div>
+          )}
+
           {/* Title */}
           <h2 className="text-3xl font-bold text-text-primary text-center mb-8">
             {title}

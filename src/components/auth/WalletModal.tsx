@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import LoadingSpinner from './LoadingSpinner';
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -12,6 +13,8 @@ interface WalletModalProps {
 export default function WalletModal({ isOpen, onClose, onLoginSuccess }: WalletModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 管理渲染状态和背景滚动
@@ -20,6 +23,7 @@ export default function WalletModal({ isOpen, onClose, onLoginSuccess }: WalletM
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShouldRender(true);
       setIsClosing(false);
+      setIsLoading(false); // 重置加载状态
       document.body.style.overflow = 'hidden';
 
       // 清除任何待执行的关闭定时器
@@ -71,9 +75,27 @@ export default function WalletModal({ isOpen, onClose, onLoginSuccess }: WalletM
   if (!shouldRender) return null;
 
   const handleWalletConnect = (wallet: string) => {
+    const walletNames: { [key: string]: string } = {
+      metamask: 'MetaMask',
+      coinbase: 'Coinbase',
+      phantom: 'Phantom',
+      walletconnect: 'WalletConnect',
+    };
+
+    setIsLoading(true);
+    setLoadingMessage(`Connecting to ${walletNames[wallet]}...`);
+
     console.log('Wallet connected:', wallet);
-    // 先播放退出动画，动画完成后自动登录
-    handleClose(true);
+
+    // 模拟钱包连接过程
+    setTimeout(() => {
+      setLoadingMessage('Authenticating wallet...');
+      setTimeout(() => {
+        setIsLoading(false);
+        // 先播放退出动画，动画完成后自动登录
+        handleClose(true);
+      }, 1000);
+    }, 1500);
   };
 
   return (
@@ -97,6 +119,17 @@ export default function WalletModal({ isOpen, onClose, onLoginSuccess }: WalletM
         }`}
       >
         <div className="bg-bg-card rounded-3xl border border-border-primary shadow-2xl p-8">
+          {/* Loading Overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 bg-bg-card/95 backdrop-blur-sm rounded-3xl flex items-center justify-center z-20">
+              <LoadingSpinner
+                size="lg"
+                message={loadingMessage}
+                variant="long"
+              />
+            </div>
+          )}
+
           {/* Title */}
           <h2 className="text-3xl font-bold text-text-primary text-center mb-8">
             Connect Wallet
