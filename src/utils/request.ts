@@ -1,6 +1,6 @@
 /**
  * Axios 请求封装
- * 支持 SIWE 签名认证和 JWT token 认证
+ * 支持 JWT token 认证
  */
 
 import axios, {
@@ -9,7 +9,6 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
-import { BASE_URL } from "@/config/configs";
 
 // ==================== 类型定义 ====================
 
@@ -36,25 +35,23 @@ export interface ApiError {
 }
 
 /**
- * SIWE 认证请求配置
- */
-export interface SiweAuthConfig {
-  message: string; // SIWE 消息字符串
-  signature: string; // 签名 (hex 格式)
-}
-
-/**
  * 扩展的请求配置
  */
 export interface RequestConfig extends AxiosRequestConfig {
-  siweAuth?: SiweAuthConfig; // SIWE 签名认证（仅用于登录）
   skipAuth?: boolean; // 跳过 JWT token 认证（用于公开端点）
 }
 
 // ==================== 环境变量配置 ====================
 
-const API_BASE_URL = BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_TIMEOUT = 30000; // 30 秒超时
+
+// 调试：打印 API 配置
+if (typeof window !== "undefined") {
+  console.log("🔧 API 配置信息:");
+  console.log("  - API_BASE_URL:", API_BASE_URL);
+  console.log("  - API_TIMEOUT:", API_TIMEOUT);
+}
 
 // ==================== Token 管理 ====================
 
@@ -106,23 +103,28 @@ const createAxiosInstance = (): AxiosInstance => {
     (config) => {
       const customConfig = config as RequestConfig;
 
-      // 1. SIWE 签名认证（仅用于 POST /api/v1/users）
-      if (customConfig.siweAuth) {
-        config.headers["X-Message"] = customConfig.siweAuth.message;
-        config.headers["X-Signature"] = customConfig.siweAuth.signature;
-      }
+      console.log("📤 发送请求:", {
+        url: config.url,
+        baseURL: config.baseURL,
+        method: config.method,
+        fullURL: `${config.baseURL}${config.url}`,
+      });
 
-      // 2. JWT Token 认证（除非明确跳过）
-      if (!customConfig.skipAuth && !customConfig.siweAuth) {
+      // JWT Token 认证（除非明确跳过）
+      if (!customConfig.skipAuth) {
         const token = getToken();
         if (token) {
-          config.headers["Authorization"] = `Bearer ${token}`;
+          console.log("  - 使用 JWT Token 认证");
+          Object.assign(config.headers, {
+            Authorization: `Bearer ${token}`,
+          });
         }
       }
 
       return config;
     },
     (error) => {
+      console.error("❌ 请求拦截器错误:", error);
       return Promise.reject(error);
     },
   );
@@ -130,10 +132,22 @@ const createAxiosInstance = (): AxiosInstance => {
   // ==================== 响应拦截器 ====================
   instance.interceptors.response.use(
     (response: AxiosResponse<ApiResponse>) => {
+      console.log("✅ 响应成功:", {
+        url: response.config.url,
+        status: response.status,
+        data: response.data,
+      });
       // 成功响应：直接返回 data 字段
       return response.data as any;
     },
     (error: AxiosError<ApiError>) => {
+      console.error("❌ 响应错误:", {
+        url: error.config?.url,
+        message: error.message,
+        code: error.code,
+        response: error.response,
+      });
+
       // 错误处理
       if (error.response) {
         const { status, data } = error.response;

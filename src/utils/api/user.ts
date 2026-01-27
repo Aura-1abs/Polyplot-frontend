@@ -66,14 +66,15 @@ export const loginWithSiwe = async (
   signature: string,
 ): Promise<LoginResponse> => {
   const config: RequestConfig = {
-    siweAuth: { message, signature },
+    skipAuth: true,
   };
 
-  const response = await post<LoginResponse>(
-    "/api/v1/users",
-    undefined,
-    config,
-  );
+  const data = {
+    message: message,
+    signature: signature,
+  };
+
+  const response = await post<LoginResponse>("/api/v1/users", data, config);
 
   // 自动保存 token
   if (response.data.token) {
@@ -144,9 +145,11 @@ export const updateProfile = async (
 
 // ==================== 默认导出 ====================
 
-export default {
+const userApi = {
   loginWithSiwe,
   getCurrentUser,
   getUserById,
   updateProfile,
 };
+
+export default userApi;
