@@ -2,6 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { SiweMessage } from 'siwe';
+import { getAddress } from 'viem';
+import userApi from '@/utils/api/user';
+import { handleApiError } from '@/utils/api/examples';
 import LoadingSpinner from './LoadingSpinner';
 
 interface WalletModalProps {
@@ -20,7 +24,6 @@ export default function WalletModal({ isOpen, onClose, onLoginSuccess }: WalletM
   // 管理渲染状态和背景滚动
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShouldRender(true);
       setIsClosing(false);
       setIsLoading(false); // 重置加载状态
@@ -74,7 +77,7 @@ export default function WalletModal({ isOpen, onClose, onLoginSuccess }: WalletM
 
   if (!shouldRender) return null;
 
-  const handleWalletConnect = (wallet: string) => {
+  const handleWalletConnect = async (wallet: string) => {
     const walletNames: { [key: string]: string } = {
       metamask: 'MetaMask',
       coinbase: 'Coinbase',
@@ -82,20 +85,92 @@ export default function WalletModal({ isOpen, onClose, onLoginSuccess }: WalletM
       walletconnect: 'WalletConnect',
     };
 
-    setIsLoading(true);
-    setLoadingMessage(`Connecting to ${walletNames[wallet]}...`);
+    console.log('=== 开始钱包登录流程 ===');
+    console.log('选择的钱包:', wallet);
 
-    console.log('Wallet connected:', wallet);
+    try {
+      setIsLoading(true);
+      setLoadingMessage(`Connecting to ${walletNames[wallet]}...`);
 
-    // 模拟钱包连接过程
-    setTimeout(() => {
-      setLoadingMessage('Authenticating wallet...');
-      setTimeout(() => {
-        setIsLoading(false);
-        // 先播放退出动画，动画完成后自动登录
-        handleClose(true);
-      }, 1000);
-    }, 1500);
+      // 检查是否安装了钱包扩展
+      console.log('检查 window.ethereum:', typeof window.ethereum);
+      if (typeof window.ethereum === 'undefined') {
+        throw new Error('Please install MetaMask or another Web3 wallet to continue.');
+      }
+
+      // Step 1: 请求连接钱包并获取账户
+      console.log('请求连接钱包...');
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+      console.log('获取到的账户:', accounts);
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts found. Please unlock your wallet.');
+      }
+
+      // 将地址转换为 EIP-55 格式（校验和格式）
+      console.log('原始地址:', accounts[0]);
+      const walletAddress = getAddress(accounts[0]);
+      console.log('EIP-55 格式地址:', walletAddress);
+
+      // Step 2: 生成 SIWE 消息
+      setLoadingMessage('Preparing signature...');
+      console.log('生成 SIWE 消息...');
+
+      const message = new SiweMessage({
+        domain: window.location.host,
+        address: walletAddress,
+        statement: 'Sign in with Ethereum to Polyplot',
+        uri: window.location.origin,
+        version: '1',
+        chainId: 137, // Polygon Mainnet
+        nonce: Math.floor(Math.random() * 100000000).toString(),
+      });
+
+      const messageString = message.prepareMessage();
+      console.log('SIWE 消息:', messageString);
+
+      // Step 3: 请求用户签名
+      setLoadingMessage('Waiting for signature...');
+      console.log('请求用户签名...');
+
+      const signature = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [messageString, walletAddress],
+      });
+
+      console.log('签名成功:', signature);
+
+      // Step 4: 调用登录 API
+      setLoadingMessage('Authenticating...');
+      console.log('调用登录 API...');
+      console.log('API Base URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
+
+      const loginData = await userApi.loginWithSiwe(messageString, signature);
+
+      console.log('登录成功!');
+      console.log('用户数据:', loginData);
+
+      // Step 5: 登录成功，关闭弹窗
+      setIsLoading(false);
+      handleClose(true);
+    } catch (error: unknown) {
+      setIsLoading(false);
+      console.error('=== 钱包登录失败 ===');
+      console.error('错误详情:', error);
+
+      // 处理用户拒绝签名
+      if (error && typeof error === 'object' && 'code' in error && error.code === 4001) {
+        alert('Signature rejected. Please try again.');
+        return;
+      }
+
+      // 处理其他错误
+      const errorMessage = handleApiError(error);
+      console.error('错误消息:', errorMessage);
+      alert(errorMessage);
+    }
   };
 
   return (
