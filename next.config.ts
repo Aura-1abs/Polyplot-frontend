@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
 
+const isProd = process.env.NODE_ENV === 'production';
+const basePath = isProd ? '/Polyplot-frontend' : '';
+
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: process.env.NODE_ENV === 'production' ? '/Polyplot-frontend' : '',
+  basePath,
+  assetPrefix: basePath,
   images: {
     unoptimized: true,
     remotePatterns: [

@@ -1,6 +1,12 @@
 import MarketList from '@/components/home/MarketList';
 import { NarrativeCardProps } from '@/components/home/NarrativeCard';
 
+// 获取资源路径（考虑 basePath）
+const getAssetPath = (path: string) => {
+  const basePath = process.env.NODE_ENV === 'production' ? '/Polyplot-frontend' : '';
+  return `${basePath}${path}`;
+};
+
 // 模拟市场数据
 const mockMarkets: NarrativeCardProps[] = [
   {
@@ -160,7 +166,7 @@ export default function Home() {
         className="border-b border-border-primary"
         style={{
           backgroundColor: '#0f0f0f',
-          backgroundImage: `url('/topography.svg')`,
+          backgroundImage: `url('${getAssetPath('/topography.svg')}')`,
           backgroundRepeat: 'repeat',
           backgroundSize: 'auto',
         }}
